@@ -10,7 +10,6 @@ const handler = async (req, res) => {
       if (product.length === 0 || orders.length === 0) {
         return 0;
       }
-
       const processData = (arr) => {
         const processedData = {};
         for (const obj of arr) {
@@ -19,7 +18,6 @@ const handler = async (req, res) => {
         }
         return processedData;
       };
-
       const processedproduct = processData(product);
       const processedorders = processData(orders);
 
@@ -30,11 +28,6 @@ const handler = async (req, res) => {
       for (const term in processedproduct) {
         dotProduct += processedproduct[term] * (processedorders[term] || 0);
         magnitudeproduct += processedproduct[term] * processedproduct[term];
-        console.log("p", processedproduct[term]);
-        console.log("O", processedorders[term]);
-        console.log(term);
-        console.log(dotProduct);
-        console.log(magnitudeproduct);
       }
 
       for (const term in processedorders) {
@@ -50,12 +43,8 @@ const handler = async (req, res) => {
 
       const cosineSimilarity =
         dotProduct / (magnitudeproduct * magnitudeorders);
-
-      console.log(cosineSimilarity);
-
       return cosineSimilarity;
     }
-
     function findSimilarItems(product, orders, threshold) {
       const similarItems = [];
       for (const item1 of product) {
@@ -69,6 +58,9 @@ const handler = async (req, res) => {
       }
       return similarItems;
     }
+    function euclideanDistance(value1, value2) {
+      return Math.sqrt((value1 - value2) ** 2);
+    }
 
     let product = await Product.find().populate({
       path: "variants",
@@ -76,7 +68,6 @@ const handler = async (req, res) => {
       options: { lean: true },
     });
     const newProduct = product.map((item) => ({ title: item.category }));
-
     const order = await Order.find({ email });
     const response = order.map((order) => {
       const productNames = Object.values(order.products).map(
@@ -95,20 +86,72 @@ const handler = async (req, res) => {
         encounteredTitles.add(item.title);
       }
     });
-
-    console.log(newArray);
-
     const resultArray = newArray.map((item) => {
       const match = product.filter(
         (element) => element.category === item.title
       );
       return match;
     });
+    const flatArray = resultArray.flat();
 
-    res.status(200).json({
-      success: true,
-      data: resultArray,
+    const filteredArray = flatArray.map((item) => ({
+      title: item.title,
+      price: item.price,
+    }));
+
+    const filteredProducts = product.map((item) => ({
+      title: item.title,
+      price: item.price,
+    }));
+    let closestDistance = 50;
+    let closestItems = [];
+
+    filteredArray.map((item1) => {
+      filteredProducts.map((item2) => {
+        const distance = euclideanDistance(item1.price, item2.price);
+        console.log("D", distance);
+        if (distance < closestDistance) {
+          closestItems.push({ title1: item1.title, title2: item2.title });
+        }
+      });
     });
+    const resultFinalArray = closestItems.map((item) => {
+      const match = flatArray.filter(
+        (element) => element.title === item.title2
+      );
+      return match;
+    });
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function getRandomItems(array, count = 20) {
+      if (array.length < count) {
+        throw new Error("Array length is smaller than the requested count.");
+      }
+
+      const shuffledArray = shuffleArray([...array]);
+
+      return shuffledArray.slice(0, count);
+    }
+
+    try {
+      const randomItems = getRandomItems(resultFinalArray, 12);
+
+      res.status(200).json({
+        success: true,
+        data: randomItems,
+      });
+    } catch (e) {
+      res.status(200).json({
+        success: true,
+        message: "Error occured while calculating eucledian distance!!",
+      });
+    }
   }
 };
 

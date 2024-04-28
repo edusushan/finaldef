@@ -21,7 +21,16 @@ function MyApp({ Component, pageProps }) {
   const [nav, setnav] = useState(true);
   const router = useRouter();
   useEffect(() => {
-    let exempted = ["/admin"];
+    console.log(router.route);
+    let exempted = [
+      "/admin",
+      "/admin/category",
+      "/admin/allproducts",
+      "/admin/addproducts",
+      "/admin/addvariants",
+      "/admin/orders",
+      "/admin/users",
+    ];
     if (exempted.includes(router.route)) {
       setnav(false);
     }

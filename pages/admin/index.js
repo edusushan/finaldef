@@ -162,7 +162,17 @@ const Index = () => {
       {
         label: "Total Orders",
         data: OrderData.map((data) => data.totalOrdersReceived),
-        backgroundColor: ["#e60049", "#0bb4ff", "#50e991", "#00bfa0", "#50e991", "#e6d800", "#ffa300", "#dc0ab4", "#9b19f5"],
+        backgroundColor: [
+          "#e60049",
+          "#0bb4ff",
+          "#50e991",
+          "#00bfa0",
+          "#50e991",
+          "#e6d800",
+          "#ffa300",
+          "#dc0ab4",
+          "#9b19f5",
+        ],
         // borderColor: "rgba(0, 0, 0, 1)",
         // borderWidth: 1,
         // borderRadius: 2,
@@ -201,7 +211,7 @@ const Index = () => {
                 Admin Dashboard, Welcome Admin
               </h1>
 
-              <div className="w-full gap-2 xl:gap-0 h-auto flex flex-wrap flex-row items-center justify-center">
+              {/* <div className="w-full gap-2 xl:gap-0 h-auto flex flex-wrap flex-row items-center justify-center">
                 <div className="sales w-full sm:w-3/4 md:w-[49%] xl:w-[25%] my-2 py-4 px-6 rounded-lg xl:rounded-l-lg xl:rounded-r-none cursor-pointer bg-blue-100 hover:bg-blue-300 xl:border-r border-gray-400 h-[22vh]">
                   <div className="text-black flex gap-4 items-center">
                     <div className="rounded-full p-1 bg-black">
@@ -291,7 +301,7 @@ const Index = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               <div className="charts w-full p-4 my-4 flex flex-wrap gap-4 items-center justify-center bg-slate-50">
                 <div className="barchart w-full xl:w-[65%] border-2 p-2 bg-white rounded-md">

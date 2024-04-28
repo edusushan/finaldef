@@ -4,7 +4,7 @@ import React from "react";
 import { HiOutlineShoppingCart } from "react-icons/hi";
 import Product from "../models/Product";
 import Variants from "../models/Variants";
-import ProductCard from "../components/ProductCard";
+import ProductCardGlobal from "../components/productCard1";
 
 const Tshirts = ({ tshirts }) => {
   // console.log(tshirts);
@@ -16,7 +16,7 @@ const Tshirts = ({ tshirts }) => {
       <section className="text-gray-600 body-font">
         <div className="container py-24 sm:w-[50%] md:w-[90%] lg:w-[95%] w-[90%] mx-auto">
           <div className="flex flex-wrap justify-center gap-4">
-            <ProductCard details={tshirts} />
+            <ProductCardGlobal details={tshirts} />
             {/* {Object.keys(tshirts).length === 0 && (
               <span>
                 Sorry! All the tshirts are currently out of stock. New Stock

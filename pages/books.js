@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import Link from "next/link";
 import Product from "../models/Product";
 import { HiOutlineShoppingCart } from "react-icons/hi";
+import ProductCardGlobal from "../components/productCard1";
 
 const Books = ({ books, buyNow }) => {
   console.log(books);
@@ -14,13 +15,15 @@ const Books = ({ books, buyNow }) => {
       <section className="text-gray-600 body-font">
         <div className="container py-24 sm:w-[50%] md:w-[90%] lg:w-[95%] w-[90%] mx-auto">
           <div className="flex flex-wrap justify-center gap-4">
-            {Object.keys(books).length === 0 && (
+            <ProductCardGlobal details={books} />
+
+            {/* {Object.keys(books).length === 0 && (
               <span>
                 Sorry! All the books are currently out of stock. New Stock
                 coming soon!
               </span>
-            )}
-            {Object.keys(books).map((product) => {
+            )} */}
+            {/* {Object.keys(books).map((product) => {
               // console.log(books[product].size);
               return (
                 <div
@@ -84,55 +87,71 @@ const Books = ({ books, buyNow }) => {
                           <span>Buy Now</span>
                         </button>
                       )}
-                    </div>
+                    </div> */}
 
-                    {/* रू */}
+            {/* रू
                   </div>
                 </div>
               );
-            })}
+            })} */}
           </div>
         </div>
       </section>
     </div>
   );
 };
-
 export async function getServerSideProps(context) {
   if (!mongoose.connections[0].readyState) {
     mongoose.connect(process.env.MONGO_URI);
   }
+  let books;
 
-  let products = await Product.find({ category: "books" });
+  let products = await Product.find({ category: "books" }).populate({
+    path: "variants",
+    model: Variants,
+    options: { lean: true },
+  });
 
-  let books = {};
-  for (let item of products) {
-    if (item.title in books) {
-      if (item.availableQty > 0) {
-        books[item.title].availableQty += item.availableQty;
-      }
-    } else {
-      books[item.title] = JSON.parse(JSON.stringify(item));
-    }
-  }
-  //   if (
-  //     !books[item.title].color.includes(item.color) &&
-  //     item.availableQty > 0
-  //   ) {
-  //     books[item.title].color.push(item.color);
-  //   }
-  //   if (!books[item.title].size.includes(item.size) && item.availableQty > 0) {
-  //     books[item.title].size.push(item.size);
-  //   }
-  // } else {
-  //   books[item.title] = JSON.parse(JSON.stringify(item));
-  //   if (item.availableQty > 0) {
-  //     books[item.title].color = [item.color];
-  //     books[item.title].size = [item.size];
-  //   }
   return {
-    props: { books: JSON.parse(JSON.stringify(books)) }, // will be passed to the page component as props
+    props: { books: JSON.parse(JSON.stringify(products)) }, // will be passed to the page component as props
   };
 }
+
+// export async function getServerSideProps(context) {
+//   if (!mongoose.connections[0].readyState) {
+//     mongoose.connect(process.env.MONGO_URI);
+//   }
+
+//   let products = await Product.find({ category: "books" });
+
+//   let books = {};
+//   for (let item of products) {
+//     if (item.title in books) {
+//       if (item.availableQty > 0) {
+//         books[item.title].availableQty += item.availableQty;
+//       }
+//     } else {
+//       books[item.title] = JSON.parse(JSON.stringify(item));
+//     }
+//   }
+//   //   if (
+//   //     !books[item.title].color.includes(item.color) &&
+//   //     item.availableQty > 0
+//   //   ) {
+//   //     books[item.title].color.push(item.color);
+//   //   }
+//   //   if (!books[item.title].size.includes(item.size) && item.availableQty > 0) {
+//   //     books[item.title].size.push(item.size);
+//   //   }
+//   // } else {
+//   //   books[item.title] = JSON.parse(JSON.stringify(item));
+//   //   if (item.availableQty > 0) {
+//   //     books[item.title].color = [item.color];
+//   //     books[item.title].size = [item.size];
+//   //   }
+//   return {
+//     props: { books: JSON.parse(JSON.stringify(books)) }, // will be passed to the page component as props
+//   };
+// }
 
 export default Books;
